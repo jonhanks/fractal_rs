@@ -11,6 +11,8 @@ pub enum PaletteType {
     BW,
     Color1Mod,
     Color1Lin,
+    Color2Mod,
+    Color2Lin,
 }
 
 pub struct Palette {
@@ -33,7 +35,7 @@ pub fn new_bw() -> Palette {
 
 pub fn new_color1_mod() -> Palette {
     let mut pd = Vec::new();
-    pd.append(&mut color_step(0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 100));
+    pd.append(&mut color_step(0.0, 0.0, 0.7, 1.0, 0.0, 0.0, 100));
     pd.append(&mut color_step(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 100));
     pd.append(&mut color_step(0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 100));
     pd.append(&mut color_step(1.0, 1.0, 0.0, 0.0, 0.0, 0.7, 100));
@@ -50,6 +52,34 @@ pub fn new_color1_lin() -> Palette {
     p.color_mode = ColorMode::LinearScale;
     p
 }
+
+pub fn new_color2_mod() -> Palette {
+    let mut pd = Vec::new();
+    pd.append(&mut color_step(0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 100));
+    pd.append(&mut color_step(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 100));
+    pd.append(&mut color_step(0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 100));
+    pd.append(&mut color_step(1.0, 1.0, 0.0, 0.0, 0.0, 0.7, 100));
+    Palette {
+        palette_type: PaletteType::Color2Mod,
+        color_mode: ColorMode::Modulus,
+        palette: pd,
+    }
+}
+
+pub fn new_color2_lin() -> Palette {
+    let mut pd = Vec::new();
+    pd.append(&mut color_step(0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 100));
+    pd.append(&mut color_step(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 100));
+    pd.append(&mut color_step(0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 100));
+    pd.append(&mut color_step(1.0, 1.0, 0.0, 0.0, 0.0, 0.7, 100));
+    Palette {
+        palette_type: PaletteType::Color2Lin,
+        color_mode: ColorMode::Modulus,
+        palette: pd,
+    }
+}
+
+
 
 fn rgb_f64_to_rgb_u32(r: f64, g: f64, b: f64) -> u32 {
     let mut sr = (r * 255.0) as u32;
@@ -82,7 +112,7 @@ fn color_step(
     let delta_g = (dest_g - cur_g) / steps_f;
     let delta_b = (dest_b - cur_b) / steps_f;
 
-    for i in 0..steps {
+    for _i in 0..steps {
         p.push(rgb_f64_to_rgb_u32(cur_r, cur_g, cur_b));
         cur_r += delta_r;
         cur_g += delta_g;

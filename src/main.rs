@@ -2,7 +2,7 @@ mod mandelbrot;
 mod palette;
 
 use crate::mandelbrot::FractalType;
-use num_complex::Complex64;
+use num_complex::{Complex64, ComplexFloat};
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
@@ -12,7 +12,9 @@ fn cycle_palette(p: palette::Palette) -> palette::Palette {
     return match p.palette_type {
         palette::PaletteType::BW => palette::new_color1_lin(),
         palette::PaletteType::Color1Lin => palette::new_color1_mod(),
-        palette::PaletteType::Color1Mod => palette::new_bw(),
+        palette::PaletteType::Color1Mod => palette::new_color2_lin(),
+        palette::PaletteType::Color2Lin => palette::new_color2_mod(),
+        palette::PaletteType::Color2Mod => palette::new_bw(),
     };
 }
 
