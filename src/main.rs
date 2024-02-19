@@ -169,7 +169,7 @@ impl App for FractalViewer {
             }
         });
         egui::Window::new("Controls")
-            .collapsible(false)
+            .collapsible(true)
             .resizable(false)
             .show(ctx, |ui| {
                 ui.vertical(|ui| {
@@ -218,6 +218,13 @@ impl App for FractalViewer {
                         }
                         ui.label("Detail");
                     }));
+                    ui.label(format!("Scale: {}", self.current_state.scale));
+                    ui.label(format!("Max iter: {}", self.current_state.max_iterations));
+                    ui.label(format!("Center: {}, {}", self.current_state.center.re, self.current_state.center.im));
+                    if let FractalType::Julia(c) = self.current_state.fractal_type {
+                        ui.label(format!("Julia: {}, {}", c.re, c.im));
+                    }
+
                 })
             });
         if new_palette != self.current_palette {
