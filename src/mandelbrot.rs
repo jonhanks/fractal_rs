@@ -1,10 +1,25 @@
+use std::fmt::Display;
 pub use num_complex::{Complex64, ComplexFloat};
 use rayon::prelude::*;
+use crate::mandelbrot;
 
+#[derive(Clone, PartialEq)]
 pub enum FractalType {
     Mandelbrot,
     Julia(Complex64),
 }
+
+impl Display for FractalType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let str = String::from(match *self {
+            FractalType::Mandelbrot => "Mandelbrot",
+            FractalType::Julia(_) => "Julia",
+        });
+        write!(f, "{}", str)
+    }
+}
+
+#[derive(Clone)]
 pub struct State {
     pub width: u32,
     pub height: u32,
@@ -15,6 +30,17 @@ pub struct State {
 }
 
 impl State {
+    pub fn new(w: u32, h: u32) -> Self {
+        Self {
+            width: w,
+            height: h,
+            max_iterations: 500,
+            scale: 2.0,
+            center: mandelbrot::Complex64::new(0., 0.),
+            fractal_type: mandelbrot::FractalType::Mandelbrot,
+        }
+    }
+
     pub fn aspect(&self) -> f64 {
         self.width as f64 / self.height as f64
     }
@@ -24,6 +50,14 @@ impl State {
             self.scale / self.width as f64,
             (self.scale / self.aspect()) / self.height as f64,
         )
+    }
+
+    pub fn pixel_to_mandelbrot_coord(&self, x: i32, y: i32) -> Complex64 {
+        let (x_incr, y_incr) = self.increments();
+        let x = x - (self.width as i32/2);
+        let y = (self.height as i32/2) - y;
+        Complex64::new(self.center.re + ((x as f64) * x_incr), self.center.im +((y as f64) * y_incr))
+
     }
 }
 

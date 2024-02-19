@@ -1,4 +1,7 @@
-pub type PaletteData = Vec<u32>;
+use std::fmt::Display;
+use eframe::egui;
+use egui::Color32;
+pub type PaletteData = Vec<Color32>;
 
 #[derive(Copy, Clone, Debug)]
 pub enum ColorMode {
@@ -6,13 +9,38 @@ pub enum ColorMode {
     Modulus,
 }
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub enum PaletteType {
     BW,
     Color1Mod,
     Color1Lin,
     Color2Mod,
     Color2Lin,
+}
+
+impl PaletteType {
+    pub fn to_palette(&self) -> Palette {
+        match *self {
+            PaletteType::BW => new_bw(),
+            PaletteType::Color1Mod => new_color1_mod(),
+            PaletteType::Color2Mod => new_color2_mod(),
+            PaletteType::Color1Lin => new_color1_lin(),
+            PaletteType::Color2Lin => new_color2_lin(),
+        }
+    }
+}
+
+impl Display for PaletteType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let str = String::from(match *self {
+            PaletteType::BW => "Black and White",
+            PaletteType::Color1Mod => "Color Modulus 1",
+            PaletteType::Color2Mod => "Color Modulus 2",
+            PaletteType::Color1Lin => "Color Linear 1",
+            PaletteType::Color2Lin => "Color Linear 2",
+        });
+        write!(f, "{}", str)
+    }
 }
 
 pub struct Palette {
@@ -24,7 +52,7 @@ pub struct Palette {
 pub fn new_bw() -> Palette {
     let mut pd = Vec::new();
     for i in 0u32..255 {
-        pd.push((i & 0xff) << 16 | (i & 0xff) << 8 | (i & 0xff));
+        pd.push(Color32::from_rgb(i as u8, i as u8, i as u8));
     }
     Palette {
         palette_type: PaletteType::BW,
@@ -81,7 +109,7 @@ pub fn new_color2_lin() -> Palette {
 
 
 
-fn rgb_f64_to_rgb_u32(r: f64, g: f64, b: f64) -> u32 {
+fn rgb_f64_to_rgb_u32(r: f64, g: f64, b: f64) -> Color32 {
     let mut sr = (r * 255.0) as u32;
     let mut sg = (g * 255.0) as u32;
     let mut sb = (b * 255.0) as u32;
@@ -94,7 +122,7 @@ fn rgb_f64_to_rgb_u32(r: f64, g: f64, b: f64) -> u32 {
     if sb > 255 {
         sb = 255;
     }
-    ((sr << 16) | (sg << 8) | (sb)) as u32
+    Color32::from_rgb(sr as u8, sg as u8, sb as u8)
 }
 
 fn color_step(

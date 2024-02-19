@@ -8,6 +8,6 @@ license = "mit"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-sdl2 = "0.36.0"
 num-complex = "0.4.4"
 rayon = "1.8.0"
+eframe = "0.26.2"
